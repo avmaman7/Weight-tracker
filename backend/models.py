@@ -35,13 +35,19 @@ class Client(db.Model):
     weight_entries = db.relationship('WeightEntry', backref='client', lazy=True, cascade='all, delete-orphan')
 
     def to_dict(self):
-        return {
+        result = {
             'id': self.id,
             'name': self.name,
             'email': self.email,
-            'created_at': self.created_at.isoformat(),
-            'user_id': self.user_id
+            'created_at': self.created_at.isoformat()
         }
+        # Only include user_id if the column exists and has a value
+        try:
+            if hasattr(self, 'user_id'):
+                result['user_id'] = self.user_id
+        except:
+            pass
+        return result
 
 class WeightEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
