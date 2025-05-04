@@ -453,10 +453,7 @@ export const deleteWeightEntry = (entryId) => {
   return Promise.resolve({ data: { message: 'Weight entry deleted successfully' } });
 };
 
-// Logout function
-export const logout = () => {
-  // In a real app, this would clear the session/token
-  return Promise.resolve({ data: { message: 'Logout successful' } });
-};
+// This is a duplicate logout function that was causing the build error
+// The real logout function is defined above at line 150
 
 export default api;
