@@ -24,8 +24,22 @@ const Login = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      // For testing, we'll just use the mock API which always succeeds
-      const response = await getCurrentUser();
+      let response;
+
+      if (isLogin) {
+        // Login with the provided credentials
+        response = await login({
+          username: formData.username,
+          password: formData.password
+        });
+      } else {
+        // Register with the provided information
+        response = await register({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        });
+      }
 
       // Call the onLogin callback with the user data
       onLogin(response.data.user);
@@ -34,7 +48,11 @@ const Login = ({ onLogin }) => {
       navigate('/');
     } catch (err) {
       console.error('Authentication error:', err);
-      setError('Authentication failed. Please try again.');
+      if (err.response && err.response.data && err.response.data.error) {
+        setError(err.response.data.error);
+      } else {
+        setError('Authentication failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

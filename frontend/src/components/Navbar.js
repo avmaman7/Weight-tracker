@@ -22,9 +22,16 @@ const Navbar = ({ user }) => {
     <nav className="bg-blue-600 shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center">
-            <span className="text-white font-bold text-xl">Weight Tracker</span>
-          </Link>
+          {/* Only make the title a link to home if user is logged in */}
+          {user ? (
+            <Link to="/" className="flex items-center">
+              <span className="text-white font-bold text-xl">Weight Tracker</span>
+            </Link>
+          ) : (
+            <div className="flex items-center">
+              <span className="text-white font-bold text-xl">Weight Tracker</span>
+            </div>
+          )}
           <div className="flex space-x-4 items-center">
             {user ? (
               <>
