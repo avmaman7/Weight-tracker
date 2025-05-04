@@ -10,7 +10,14 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true // This is important for cookies/sessions
 });
+
+// Authentication endpoints
+export const login = (userData) => api.post('/auth/login', userData);
+export const register = (userData) => api.post('/auth/register', userData);
+export const logout = () => api.post('/auth/logout');
+export const getCurrentUser = () => api.get('/auth/user');
 
 // Client endpoints
 export const getClients = () => api.get('/clients');

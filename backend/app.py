@@ -1,7 +1,8 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
+from flask_login import LoginManager
 from config import Config
-from models import db
+from models import db, User
 from routes.client import client_bp
 from routes.weight import weight_bp
 import os
@@ -10,13 +11,37 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Initialize extensions
-    CORS(app)
+    # Initialize extensions with simpler CORS configuration
+    CORS(app,
+         origins=["http://localhost:3000", "http://localhost:3001",
+                 "http://192.168.1.167:3000", "http://192.168.1.167:3001"],
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+         expose_headers=["Content-Type", "Authorization"])
     db.init_app(app)
+
+    # Initialize Flask-Login
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+
+    # Handle unauthorized access for API requests
+    @login_manager.unauthorized_handler
+    def unauthorized():
+        return jsonify({'error': 'Authentication required'}), 401
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
 
     # Register blueprints
     app.register_blueprint(client_bp, url_prefix='/api/clients')
     app.register_blueprint(weight_bp, url_prefix='/api/weight')
+
+    # Import and register auth blueprint
+    from routes.auth import auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
     # Add a health check endpoint
     @app.route('/health', methods=['GET'])

@@ -45,4 +45,9 @@ class Config:
         SQLALCHEMY_ENGINE_OPTIONS = {}
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'development-secret-key-for-testing-only'
+
+    # Flask-Login configuration
+    SESSION_TYPE = 'filesystem'
+    SESSION_PERMANENT = False
+    PERMANENT_SESSION_LIFETIME = 1800  # 30 minutes
