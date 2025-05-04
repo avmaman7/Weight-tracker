@@ -14,7 +14,9 @@ def create_app():
     # Initialize extensions with simpler CORS configuration
     CORS(app,
          origins=["http://localhost:3000", "http://localhost:3001",
-                 "http://192.168.1.167:3000", "http://192.168.1.167:3001"],
+                 "http://192.168.1.167:3000", "http://192.168.1.167:3001",
+                 "https://weight-tracker-frontend-three.vercel.app",
+                 "https://weight-tracker-frontend-1s2bk3dpe-avmaman7s-projects.vercel.app"],
          supports_credentials=True,
          allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
          methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
