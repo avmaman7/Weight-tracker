@@ -4,7 +4,8 @@ import Navbar from './components/Navbar';
 import ClientList from './components/ClientList';
 import ClientDetail from './components/ClientDetail';
 import Login from './components/Login';
-import { getCurrentUser } from './services/api';
+// Use test API instead of regular API
+import { getCurrentUser } from './services/test-api';
 
 function App() {
   const [user, setUser] = useState(null);

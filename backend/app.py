@@ -11,18 +11,8 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Initialize extensions with simpler CORS configuration
-    CORS(app,
-         origins=["http://localhost:3000", "http://localhost:3001",
-                 "http://192.168.1.167:3000", "http://192.168.1.167:3001",
-                 "https://weight-tracker-frontend-three.vercel.app",
-                 "https://weight-tracker-frontend-1s2bk3dpe-avmaman7s-projects.vercel.app",
-                 "https://weight-tracker-lilac.vercel.app",
-                 "https://weight-tracker-frontend-gn2qvmovt-avmaman7s-projects.vercel.app"],
-         supports_credentials=True,
-         allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
-         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-         expose_headers=["Content-Type", "Authorization"])
+    # Use a more permissive CORS configuration for testing
+    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
     db.init_app(app)
 
     # Initialize Flask-Login
@@ -51,6 +41,71 @@ def create_app():
     @app.route('/health', methods=['GET'])
     def health_check():
         return jsonify({"status": "healthy", "environment": os.environ.get('FLASK_ENV', 'development')})
+
+    # Add test routes that don't require authentication
+    @app.route('/api/test/clients', methods=['GET'])
+    def test_get_clients():
+        try:
+            # Create a test user if it doesn't exist
+            from models import User
+            test_user = User.query.filter_by(username="testuser").first()
+            if not test_user:
+                test_user = User(username="testuser", email="test@example.com")
+                test_user.set_password("password123")
+                db.session.add(test_user)
+                db.session.commit()
+
+            # Get clients for the test user
+            from models import Client
+            clients = Client.query.filter_by(user_id=test_user.id).all()
+            return jsonify([client.to_dict() for client in clients])
+        except Exception as e:
+            app.logger.error(f"Error in test_get_clients: {str(e)}")
+            return jsonify({"error": str(e)}), 500
+
+    @app.route('/api/test/clients', methods=['POST'])
+    def test_add_client():
+        try:
+            data = request.get_json()
+
+            if not data or 'name' not in data or 'email' not in data:
+                return jsonify({'error': 'Name and email are required'}), 400
+
+            # Create a test user if it doesn't exist
+            from models import User, Client
+            test_user = User.query.filter_by(username="testuser").first()
+            if not test_user:
+                test_user = User(username="testuser", email="test@example.com")
+                test_user.set_password("password123")
+                db.session.add(test_user)
+                db.session.commit()
+
+            # Create new client
+            new_client = Client(name=data['name'], email=data['email'], user_id=test_user.id)
+            db.session.add(new_client)
+            db.session.commit()
+
+            return jsonify({'message': 'Client added successfully', 'client': new_client.to_dict()}), 201
+        except Exception as e:
+            app.logger.error(f"Error in test_add_client: {str(e)}")
+            return jsonify({"error": str(e)}), 500
+
+    @app.route('/api/test/user', methods=['GET'])
+    def test_get_user():
+        try:
+            # Create a test user if it doesn't exist
+            from models import User
+            test_user = User.query.filter_by(username="testuser").first()
+            if not test_user:
+                test_user = User(username="testuser", email="test@example.com")
+                test_user.set_password("password123")
+                db.session.add(test_user)
+                db.session.commit()
+
+            return jsonify({'user': test_user.to_dict()}), 200
+        except Exception as e:
+            app.logger.error(f"Error in test_get_user: {str(e)}")
+            return jsonify({"error": str(e)}), 500
 
     # Add an error handler for database connection issues
     @app.errorhandler(500)

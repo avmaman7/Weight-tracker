@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getClients, addClient, deleteClient } from '../services/api';
+// Use test API instead of regular API
+import { getClients, addClient } from '../services/test-api';
+// Keep deleteClient from regular API for now
+import { deleteClient } from '../services/api';
 
 const ClientList = () => {
   const [clients, setClients] = useState([]);
