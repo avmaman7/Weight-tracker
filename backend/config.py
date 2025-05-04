@@ -49,5 +49,13 @@ class Config:
 
     # Flask-Login configuration
     SESSION_TYPE = 'filesystem'
-    SESSION_PERMANENT = False
+    SESSION_PERMANENT = True  # Make session permanent for cross-domain
     PERMANENT_SESSION_LIFETIME = 1800  # 30 minutes
+
+    # Session cookie settings
+    SESSION_COOKIE_SECURE = True  # Only send cookie over HTTPS
+    SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to session cookie
+    SESSION_COOKIE_SAMESITE = 'None'  # Allow cross-site cookies
+
+    # For testing purposes, disable CSRF protection
+    WTF_CSRF_ENABLED = False
