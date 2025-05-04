@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { addWeightEntry } from '../services/api';
+// Use test API instead of regular API
+import { addWeightEntry } from '../services/test-api';
 import { format } from 'date-fns';
 import { lbsToKg } from '../utils/weightConversion';
 

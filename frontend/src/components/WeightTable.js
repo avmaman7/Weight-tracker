@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import { updateWeightEntry, deleteWeightEntry } from '../services/api';
+// Use test API instead of regular API
+import { updateWeightEntry, deleteWeightEntry } from '../services/test-api';
 import EditWeightModal from './EditWeightModal';
 import { kgToLbs } from '../utils/weightConversion';
 

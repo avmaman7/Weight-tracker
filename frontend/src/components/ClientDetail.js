@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getClient, getWeightEntries } from '../services/api';
+// Use test API instead of regular API
+import { getClient, getWeightEntries } from '../services/test-api';
 import WeightForm from './WeightForm';
 import WeightTable from './WeightTable';
 import WeightChart from './WeightChart';
@@ -25,7 +26,7 @@ const ClientDetail = () => {
         getClient(clientId),
         getWeightEntries(clientId)
       ]);
-      
+
       setClient(clientResponse.data);
       setWeightEntries(entriesResponse.data);
       setError(null);
@@ -71,24 +72,24 @@ const ClientDetail = () => {
           Back to Clients
         </Link>
       </div>
-      
+
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">{client.name}</h1>
           <p className="text-gray-600">{client.email}</p>
         </div>
-        <button 
-          onClick={() => setShowForm(!showForm)} 
+        <button
+          onClick={() => setShowForm(!showForm)}
           className="btn btn-primary mt-3 md:mt-0"
         >
           {showForm ? 'Cancel' : 'Add Weight Entry'}
         </button>
       </div>
-      
+
       {showForm && (
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-          <WeightForm 
-            clientId={clientId} 
+          <WeightForm
+            clientId={clientId}
             onSuccess={() => {
               refreshWeightEntries();
               setShowForm(false);
@@ -96,7 +97,7 @@ const ClientDetail = () => {
           />
         </div>
       )}
-      
+
       {weightEntries.length === 0 ? (
         <div className="bg-white shadow-md rounded-lg p-6 text-center">
           <p className="text-gray-500">No weight entries found. Add your first entry!</p>
@@ -107,8 +108,8 @@ const ClientDetail = () => {
             <div className="flex border-b border-gray-200">
               <button
                 className={`pb-2 mr-4 text-sm font-medium ${
-                  activeTab === 'chart' 
-                    ? 'text-blue-600 border-b-2 border-blue-600' 
+                  activeTab === 'chart'
+                    ? 'text-blue-600 border-b-2 border-blue-600'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
                 onClick={() => setActiveTab('chart')}
@@ -117,8 +118,8 @@ const ClientDetail = () => {
               </button>
               <button
                 className={`pb-2 mr-4 text-sm font-medium ${
-                  activeTab === 'table' 
-                    ? 'text-blue-600 border-b-2 border-blue-600' 
+                  activeTab === 'table'
+                    ? 'text-blue-600 border-b-2 border-blue-600'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
                 onClick={() => setActiveTab('table')}
@@ -127,13 +128,13 @@ const ClientDetail = () => {
               </button>
             </div>
           </div>
-          
+
           {activeTab === 'chart' ? (
             <WeightChart weightEntries={weightEntries} />
           ) : (
-            <WeightTable 
-              weightEntries={weightEntries} 
-              onUpdate={refreshWeightEntries} 
+            <WeightTable
+              weightEntries={weightEntries}
+              onUpdate={refreshWeightEntries}
             />
           )}
         </div>
