@@ -16,6 +16,7 @@ const api = axios.create({
 export const getClients = () => api.get('/clients');
 export const getClient = (clientId) => api.get(`/clients/${clientId}`);
 export const addClient = (clientData) => api.post('/clients', clientData);
+export const deleteClient = (clientId) => api.delete(`/clients/${clientId}`);
 
 // Weight entry endpoints
 export const getWeightEntries = (clientId) => api.get(`/weight/client/${clientId}`);

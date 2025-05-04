@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { updateWeightEntry, deleteWeightEntry } from '../services/api';
 import EditWeightModal from './EditWeightModal';
+import { kgToLbs } from '../utils/weightConversion';
 
 const WeightTable = ({ weightEntries, onUpdate }) => {
   const [editingEntry, setEditingEntry] = useState(null);
@@ -43,7 +44,7 @@ const WeightTable = ({ weightEntries, onUpdate }) => {
           <p>{error}</p>
         </div>
       )}
-      
+
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -52,7 +53,7 @@ const WeightTable = ({ weightEntries, onUpdate }) => {
                 Date
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Weight (kg)
+                Weight (lbs)
               </th>
               <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
@@ -68,7 +69,7 @@ const WeightTable = ({ weightEntries, onUpdate }) => {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{entry.weight} kg</div>
+                  <div className="text-sm text-gray-900">{kgToLbs(entry.weight)} lbs</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
+import { kgToLbs, lbsToKg } from '../utils/weightConversion';
 
 const EditWeightModal = ({ isOpen, onClose, entry, onUpdate }) => {
   const [formData, setFormData] = useState({
@@ -11,7 +12,8 @@ const EditWeightModal = ({ isOpen, onClose, entry, onUpdate }) => {
   useEffect(() => {
     if (entry) {
       setFormData({
-        weight: entry.weight,
+        // Convert from kg to lbs for display
+        weight: kgToLbs(entry.weight),
         date: format(parseISO(entry.date), 'yyyy-MM-dd')
       });
     }
@@ -23,14 +25,15 @@ const EditWeightModal = ({ isOpen, onClose, entry, onUpdate }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!formData.weight) {
       setError('Weight is required');
       return;
     }
-    
+
     onUpdate(entry.id, {
-      weight: parseFloat(formData.weight),
+      // Convert from lbs to kg before sending to API
+      weight: lbsToKg(parseFloat(formData.weight)),
       date: formData.date
     });
   };
@@ -42,7 +45,7 @@ const EditWeightModal = ({ isOpen, onClose, entry, onUpdate }) => {
       <div className="relative bg-white rounded-lg w-full max-w-md mx-4 p-6 shadow-xl">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold text-gray-900">Edit Weight Entry</h3>
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
           >
@@ -57,11 +60,11 @@ const EditWeightModal = ({ isOpen, onClose, entry, onUpdate }) => {
             <p>{error}</p>
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="edit-weight">
-              Weight (kg)
+              Weight (lbs)
             </label>
             <input
               type="number"
@@ -74,7 +77,7 @@ const EditWeightModal = ({ isOpen, onClose, entry, onUpdate }) => {
               placeholder="Enter weight"
             />
           </div>
-          
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="edit-date">
               Date
@@ -89,17 +92,17 @@ const EditWeightModal = ({ isOpen, onClose, entry, onUpdate }) => {
               max={format(new Date(), 'yyyy-MM-dd')}
             />
           </div>
-          
+
           <div className="flex justify-end space-x-2">
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={onClose}
               className="btn btn-secondary"
             >
               Cancel
             </button>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="btn btn-primary"
             >
               Update

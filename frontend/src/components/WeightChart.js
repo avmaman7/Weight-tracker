@@ -1,6 +1,7 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { format, parseISO } from 'date-fns';
+import { kgToLbs } from '../utils/weightConversion';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,7 +26,7 @@ ChartJS.register(
 
 const WeightChart = ({ weightEntries }) => {
   // Sort entries by date
-  const sortedEntries = [...weightEntries].sort((a, b) => 
+  const sortedEntries = [...weightEntries].sort((a, b) =>
     new Date(a.date) - new Date(b.date)
   );
 
@@ -34,8 +35,8 @@ const WeightChart = ({ weightEntries }) => {
     labels: sortedEntries.map(entry => format(parseISO(entry.date), 'MMM d, yyyy')),
     datasets: [
       {
-        label: 'Weight (kg)',
-        data: sortedEntries.map(entry => entry.weight),
+        label: 'Weight (lbs)',
+        data: sortedEntries.map(entry => kgToLbs(entry.weight)),
         borderColor: 'rgb(59, 130, 246)', // Blue
         backgroundColor: 'rgba(59, 130, 246, 0.5)',
         tension: 0.3,
@@ -59,7 +60,7 @@ const WeightChart = ({ weightEntries }) => {
             return context[0].label;
           },
           label: function(context) {
-            return `Weight: ${context.parsed.y} kg`;
+            return `Weight: ${context.parsed.y} lbs`;
           }
         }
       }
@@ -69,12 +70,12 @@ const WeightChart = ({ weightEntries }) => {
         beginAtZero: false,
         ticks: {
           callback: function(value) {
-            return `${value} kg`;
+            return `${value} lbs`;
           }
         },
         title: {
           display: true,
-          text: 'Weight (kg)'
+          text: 'Weight (lbs)'
         }
       },
       x: {
@@ -88,11 +89,11 @@ const WeightChart = ({ weightEntries }) => {
 
   // Calculate min and max for better scale
   if (sortedEntries.length > 0) {
-    const weights = sortedEntries.map(entry => entry.weight);
+    const weights = sortedEntries.map(entry => kgToLbs(entry.weight));
     const minWeight = Math.min(...weights);
     const maxWeight = Math.max(...weights);
-    const buffer = (maxWeight - minWeight) * 0.1 || 1; // 10% buffer or 1kg if all weights are the same
-    
+    const buffer = (maxWeight - minWeight) * 0.1 || 2; // 10% buffer or 2lbs if all weights are the same
+
     chartOptions.scales.y.min = Math.max(0, minWeight - buffer);
     chartOptions.scales.y.max = maxWeight + buffer;
   }
